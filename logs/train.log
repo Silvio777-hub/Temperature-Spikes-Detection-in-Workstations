@@ -1,0 +1,5 @@
+2026-05-11 16:42:50,083 - ERROR - Data file not found: logs/temperature_history.csv
+2026-05-11 16:46:09,743 - ERROR - Data file not found: logs/temperature_history.csv
+2026-05-11 16:54:56,192 - ERROR - Data file not found: logs/temperature_history.csv
+2026-05-11 17:18:17,237 - INFO - Loaded 0 samples from logs/temperature_history.csv
+2026-05-11 17:44:36,722 - INFO - Loaded 0 samples from logs/temperature_history.csv

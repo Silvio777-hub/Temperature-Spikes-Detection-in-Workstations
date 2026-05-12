@@ -1,0 +1,16 @@
+psutil
+pandas
+numpy
+scikit-learn
+joblib
+matplotlib
+pyyaml
+plyer
+rich
+pytest
+wmi
+py3nvml
+fpdf
+pywin32
+fastapi
+uvicorn

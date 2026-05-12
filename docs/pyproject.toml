@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "temperature-spike-detection"
+version = "0.1.0"
+description = "Thermal anomaly detection system for workstations"
+authors = [
+    {name = "User", email = "user@example.com"}
+]
+dependencies = [
+    "psutil",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "joblib",
+    "matplotlib",
+    "pyyaml",
+    "plyer",
+    "rich"
+]
+
+[project.scripts]
+tsd = "src.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
