@@ -8,10 +8,10 @@ pyyaml
 plyer
 rich
 pytest
-wmi
+wmi; sys_platform == 'win32'
 py3nvml
 fpdf
-pywin32
+pywin32; sys_platform == 'win32'
 fastapi
 uvicorn
 tensorflow
