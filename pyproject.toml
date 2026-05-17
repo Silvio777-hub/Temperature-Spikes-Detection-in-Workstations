@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "temperature-spikes-detection"
+version = "1.0.0"
+description = "A professional-grade CPS for workstation thermal anomaly detection using Machine Learning."
+authors = [
+    {name = "Opoka JM Silvio", email = "opoka2010@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "psutil",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "joblib",
+    "matplotlib",
+    "pyyaml",
+    "plyer",
+    "rich",
+    "wmi",
+    "py3nvml",
+    "fpdf",
+    "pywin32",
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+    "jinja2",
+    "tensorflow",
+    "seaborn"
+]
+
+[project.scripts]
+tsd-monitor = "thermal_system.main:main"
+tsd-api = "thermal_system.api_server:start_api_server"
+tsd-aggregator = "thermal_system.aggregator:run_aggregator"

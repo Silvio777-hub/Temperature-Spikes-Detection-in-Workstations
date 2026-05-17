@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS Thermal Guard Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-normal: #10b981;
+            --accent-alert: #f59e0b;
+            --accent-critical: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--accent-normal);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .card-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            grid-column: span 2;
+            height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Workstation Health Monitoring</h1>
+        <div id="status" class="status-badge">Normal</div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-title">CPU Temperature</div>
+            <div id="temp-value" class="card-value">--°C</div>
+        </div>
+        <div class="card">
+            <div class="card-title">CPU Usage</div>
+            <div id="cpu-value" class="card-value">--%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">System State</div>
+            <div id="state-message" style="color: var(--text-secondary)">Waiting for telemetry...</div>
+        </div>
+        <div class="card chart-container">
+            <canvas id="thermalChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('thermalChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: [],
+                    borderColor: '#ef4444',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: '#334155' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#f8fafc' } }
+                }
+            }
+        });
+
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/metrics/latest');
+                const data = await response.json();
+                
+                if (data.error) return;
+
+                // Update Values
+                document.getElementById('temp-value').innerText = `${data.Temperature.toFixed(1)}°C`;
+                document.getElementById('cpu-value').innerText = `${data.CPU_Usage.toFixed(1)}%`;
+                document.getElementById('state-message').innerText = data.Message || "System stable.";
+                
+                const statusBadge = document.getElementById('status');
+                statusBadge.innerText = data.State;
+                
+                if (data.State === 'CRITICAL') {
+                    statusBadge.style.background = 'var(--accent-critical)';
+                } else if (data.State === 'ALERT') {
+                    statusBadge.style.background = 'var(--accent-alert)';
+                } else {
+                    statusBadge.style.background = 'var(--accent-normal)';
+                }
+
+                // Update Chart
+                const time = new Date().toLocaleTimeString();
+                chart.data.labels.push(time);
+                chart.data.datasets[0].data.push(data.Temperature);
+
+                if (chart.data.labels.length > 20) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update();
+
+            } catch (error) {
+                console.error("Failed to fetch telemetry:", error);
+            }
+        }
+
+        setInterval(updateDashboard, 2000);
+        updateDashboard();
+    </script>
+</body>
+</html>

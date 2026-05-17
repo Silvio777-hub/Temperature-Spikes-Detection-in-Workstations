@@ -1,0 +1,17 @@
+monitoring:
+  sampling_interval: 5
+  history_buffer_size: 30
+
+thresholds:
+  critical_temp: 85
+  alert_temp: 75
+  sustained_temp: 70
+  sustained_duration: 300
+  rapid_rise_threshold: 5
+
+mitigation:
+  enabled: true
+
+security:
+  api_key: "CPS_SECURE_TOKEN_2026"
+  port: 5000

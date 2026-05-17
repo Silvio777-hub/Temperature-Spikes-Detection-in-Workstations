@@ -1,4 +1,4 @@
 @echo off
-echo Starting Thermal Spike Detection CPS...
-python -m Code.main monitor --ml
+echo Starting Temperature Spikes Detection in Workstations...
+python -m thermal_system.main monitor --ml
 pause
